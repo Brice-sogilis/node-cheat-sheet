@@ -14,7 +14,6 @@ import {
 import {Apple, Peach, Tomato} from "../grpc/definition/fruitdealer_pb";
 
 const expect = chai.expect;
-const assert = chai.assert;
 chai.should();
 
 describe('gRPC Framework', function () {
@@ -58,8 +57,13 @@ describe('gRPC Framework', function () {
         let client: FruitDealerClient;
         before(function (done) {
             server.listen(SERVER_PORT, (err) => {
-                client = new FruitDealerClient("localhost:" + SERVER_PORT, credentials.createInsecure());
-                done();
+                if(err){
+                    done(err);
+                }
+                else{
+                    client = new FruitDealerClient("localhost:" + SERVER_PORT, credentials.createInsecure());
+                    done();
+                }
             });
         });
 
@@ -163,12 +167,13 @@ function newPeach(weight: number): Peach {
  * @constructor
  */
 function FruitDealerServerImpl(tomatoesForOneApple: number): services.IFruitDealerServer {
-    const res: services.IFruitDealerServer = {
+    return {
         appleForPeach(call: ServerUnaryCall<Apple, Peach>, callback: grpc.sendUnaryData<Peach>) {
             const response = new Peach();
             response.setWeight(call.request.getWeight());
             callback(null, response);
         },
+
         appleForTomatoes(callStream: grpc.ServerWritableStream<Apple, Tomato>) {
             for (let i = 0; i < tomatoesForOneApple; i++) {
                 const tomato = new Tomato();
@@ -177,6 +182,7 @@ function FruitDealerServerImpl(tomatoesForOneApple: number): services.IFruitDeal
             }
             callStream.end();
         },
+
         peachesForApples(callDualStream: ServerDuplexStream<Peach, Apple>) {
             callDualStream.on('data', peach => {
                 const apple = new Apple();
@@ -187,6 +193,7 @@ function FruitDealerServerImpl(tomatoesForOneApple: number): services.IFruitDeal
                 callDualStream.end();
             })
         },
+
         tomatoesForApple(callStream: ServerReadableStream<Tomato, Apple>, callback: grpc.sendUnaryData<Apple>) {
             let totalWeight = 0;
             callStream.on('data', tomato => {
@@ -198,6 +205,5 @@ function FruitDealerServerImpl(tomatoesForOneApple: number): services.IFruitDeal
                 callback(null, apple);
             })
         }
-    }
-    return res;
+    };
 }

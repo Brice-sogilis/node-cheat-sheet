@@ -16,17 +16,6 @@ class CustomEmitter extends EventEmitter {
         super.on(eventName, listener);
         return listener;
     }
-
-    /**
-     * Same behavior as 'EventEmitter.once' but returns the added listener
-     * @param eventName id of the event to listen
-     * @param listener callable listener to register
-     * @returns EventListener the added listener, can be passed as parameter to EventEmitter.removeListener()
-     */
-    registerOnce(eventName: string | symbol, listener: EventListener): EventListener {
-        super.once(eventName, listener);
-        return listener;
-    }
 }
 
 function numberAppender(target: number[], value: number) {

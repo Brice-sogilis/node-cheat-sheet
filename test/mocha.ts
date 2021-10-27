@@ -136,10 +136,10 @@ describe('Mocha framework', function () {
                 });
 
                 it.skip("Ensure done cannot be called multiple times", function (done) {
-                    fs.readdir(".", (err, files) => {
+                    fs.readdir(".", (_err, _files) => {
                         done();
                     });
-                    fs.readdir(".", (err, files) => {
+                    fs.readdir(".", (_err, _files) => {
                         done();
                     });
                 });
@@ -147,7 +147,7 @@ describe('Mocha framework', function () {
 
             describe('Returning a Promise', function () {
                 it('Should behave as if the  function was marked async', function () {
-                    return readFilesAsync().then(files => OK());
+                    return readFilesAsync().then(_files => OK());
                 });
 
                 it.skip('Mocha actually wait the returned promise resolution', function () {
