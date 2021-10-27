@@ -1,0 +1,21 @@
+syntax = "proto3";
+package fruitdealer;
+
+message Apple {
+  double weight = 1;
+}
+
+message Tomato {
+  double weight = 1;
+}
+
+message Peach {
+  double weight = 1;
+}
+
+service FruitDealer {
+  rpc appleForTomatoes(Apple) returns (stream Tomato);
+  rpc appleForPeach(Apple) returns (Peach);
+  rpc tomatoesForApple(stream Tomato) returns (Apple);
+  rpc peachesForApples(stream Peach) returns (stream Apple);
+}
