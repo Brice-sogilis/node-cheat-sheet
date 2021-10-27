@@ -94,21 +94,26 @@ describe('gRPC Framework', function () {
                     done();
                 }
             });
+
             [tomatoA, tomatoB, tomatoC].forEach(t => requestStream.write(t));
             requestStream.end();
         });
 
         it('Stream response : client -- 1..n -- server', function (done) {
             //Client method returns a stream to read the response items
-            const streamResponse = client.appleForTomatoes(newApple(FRUIT_WEIGHT));
             const responseItems : Tomato[] = [];
+
+            const streamResponse = client.appleForTomatoes(newApple(FRUIT_WEIGHT));
+
             streamResponse.on('data', (tomato : Tomato) => {
                 expect(tomato.getWeight()).to.be.eql(FRUIT_WEIGHT);
                 responseItems.push(tomato);
             });
+
             streamResponse.on('error', (err) => {
                 done(err);
-            })
+            });
+
             streamResponse.on('end', () => {
                 expect(responseItems).to.have.length(TOMATOES_FOR_ONE_APPLE);
                 done();
@@ -119,18 +124,27 @@ describe('gRPC Framework', function () {
             const peachA = newPeach(FRUIT_WEIGHT);
             const peachB = newPeach(FRUIT_WEIGHT);
             const peachC = newPeach(FRUIT_WEIGHT);
+
             const apples : Apple[] = [];
+
             const duplexStream = client.peachesForApples();
+
             duplexStream.on('data',(apple : Apple) => {
                 expect(apple.getWeight()).to.be.eql(FRUIT_WEIGHT);
                 apples.push(apple);
             });
-            [peachA, peachB, peachC].forEach(peach => duplexStream.write(peach));
-            duplexStream.end();//notify the end of the client request
+
+            duplexStream.on('error', (err) => {
+                done(err);
+            });
+
             duplexStream.on('end', () => {//this end comes from the server
                 expect(apples).to.have.length(3);
-               done();
+                done();
             });
+
+            [peachA, peachB, peachC].forEach(peach => duplexStream.write(peach));
+            duplexStream.end();//notify the end of the client request
         });
 
         after(function (done) {
@@ -162,7 +176,6 @@ function newPeach(weight: number): Peach {
 
 /**
  * Object-style creation of an implementation gRPC service FruitDealer
- * Alwas return responses fruits with the same weight as the request ones
  * @param tomatoesForOneApple the integer number of tomato received for one apple
  * @constructor
  */
