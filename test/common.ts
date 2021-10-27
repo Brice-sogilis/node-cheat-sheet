@@ -19,23 +19,25 @@ export class Counter {
 /**
  * Does nothing but does it well
  */
-export function noop() {}
+export function noop() {
+}
 
 /**
  * Alias for chai.assert.ok(true)
  */
-export function OK() {assert.ok(true)}
+export function OK() {
+    assert.ok(true)
+}
 
 /**
  * Promise version of fs.readdir
  */
-export function readFilesAsync() : Promise<string[]> {
+export function readFilesAsync(): Promise<string[]> {
     return new Promise((resolve, reject) => {
         fs.readdir(".", (err, files) => {
-            if(err){
+            if (err) {
                 reject(err);
-            }
-            else{
+            } else {
                 resolve(files);
             }
         })
