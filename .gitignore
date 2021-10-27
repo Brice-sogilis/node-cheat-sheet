@@ -1,0 +1,7 @@
+#IntelliJ files
+.idea
+*.iml
+
+#NodeJS outputs
+build
+node_modules
