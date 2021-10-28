@@ -1,3 +1,4 @@
+![Tests](https://github.com/Brice-sogilis/node-cheat-sheet/actions/workflows/test-on-push.yml/badge.svg)
 # NodeJS Cheat Sheet
 
 A didactic repository to illustrate nodeJS concepts libraries and framework, using mocha + chai.
