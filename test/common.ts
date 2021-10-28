@@ -2,6 +2,21 @@ import fs from "fs";
 import {assert, expect} from 'chai';
 
 /**
+ * Promise version of fs.readdir
+ */
+export function readFilesAsync(): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+        fs.readdir(".", (err, files) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(files);
+            }
+        })
+    });
+}
+
+/**
  * Simple counter used to demonstrate various behaviors
  */
 export class Counter {
@@ -30,25 +45,9 @@ export function OK() {
 }
 
 /**
- * Promise version of fs.readdir
- */
-export function readFilesAsync(): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-        fs.readdir(".", (err, files) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(files);
-            }
-        })
-    })
-}
-
-/**
  * Demonstration Promise nether calling resolve nor reject
  */
 export const infinitePromise = new Promise((_resolve, _reject) => noop);
-
 
 export const didacticFailureMessage = 'This test fails to illustrate the current concept, .skip when you grasped it';
 
