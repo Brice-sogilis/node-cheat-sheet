@@ -91,77 +91,77 @@ describe('Mocha framework', function () {
                 afterAllCounter.inc();
             });
         });
+    });
 
-        describe('Skipping tests', function () {
-            it('it(...) Should be executed', function () {
-                OK();
+    describe('Using promise, async, or callbacks', function () {
+        describe('Async functions', function () {
+            it('Mocha accepts async function as test', async function () {
+                const files = await readFilesAsync();
+                assert.ok(files);
             });
 
-            it.skip('it.skip(...) should not be executed', function () {
-                expect.fail();
+            it.skip('Ensure promises resolve when using await or it will timeout', async function () {
+
+                await infinitePromise;
+                OK();
             });
         });
 
-        describe('Using promise, async, or callbacks', function () {
-            describe('Async functions', function () {
-                it('Mocha accepts async function as test', async function () {
-                    const files = await readFilesAsync();
-                    assert.ok(files);
-                });
-
-                it.skip('Ensure promises resolve when using await or it will timeout', async function () {
-
-                    await infinitePromise;
-                    OK();
-                });
+        describe("Callbacks with 'done'", function () {
+            it("You can specify a done argument to test functions, which can be called to specify the end of its execution", function (done) {
+                done();
             });
 
-            describe("Callbacks with 'done'", function () {
-                it("You can specify a done argument to test functions, which can be called to specify the end of its execution", function (done) {
+            it.skip("Passing an error to done indicate a test failure", function (done) {
+                done(new Error(didacticFailureMessage));
+            });
+
+            it("The done syntax can be used to test callback methods", function (done) {
+                fs.readdir(".", (err, _files) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        done();
+                    }
+                })
+            });
+
+            it.skip("Ensure done cannot be called multiple times", function (done) {
+                fs.readdir(".", (_err, _files) => {
                     done();
                 });
-
-                it.skip("Passing an error to done indicate a test failure", function (done) {
-                    done(new Error(didacticFailureMessage));
-                });
-
-                it("The done syntax can be used to test callback methods", function (done) {
-                    fs.readdir(".", (err, _files) => {
-                        if (err) {
-                            done(err);
-                        } else {
-                            done();
-                        }
-                    })
-                });
-
-                it.skip("Ensure done cannot be called multiple times", function (done) {
-                    fs.readdir(".", (_err, _files) => {
-                        done();
-                    });
-                    fs.readdir(".", (_err, _files) => {
-                        done();
-                    });
+                fs.readdir(".", (_err, _files) => {
+                    done();
                 });
             });
+        });
 
-            describe('Returning a Promise', function () {
-                it('Should behave as if the  function was marked async', function () {
-                    return readFilesAsync().then(_files => OK());
-                });
-
-                it.skip('Mocha actually wait the returned promise resolution', function () {
-                    return readFilesAsync().then(_files => failDidactic());
-                });
-
-                it("Nested promises are allowed too", function () {
-                    return readFilesAsync().then(_files => readFilesAsync().then(_files => OK()));
-                });
-
-                it.skip('Ensure returned promises resolve', function () {
-                    return infinitePromise;
-                });
+        describe('Returning a Promise', function () {
+            it('Should behave as if the  function was marked async', function () {
+                return readFilesAsync().then(_files => OK());
             });
+
+            it.skip('Mocha actually wait the returned promise resolution', function () {
+                return readFilesAsync().then(_files => failDidactic());
+            });
+
+            it("Nested promises are allowed too", function () {
+                return readFilesAsync().then(_files => readFilesAsync().then(_files => OK()));
+            });
+
+            it.skip('Ensure returned promises resolve', function () {
+                return infinitePromise;
+            });
+        });
+    });
+
+    describe('Skipping tests', function () {
+        it('it(...) Should be executed', function () {
+            OK();
+        });
+
+        it.skip('it.skip(...) should not be executed', function () {
+            expect.fail();
         });
     });
 });
